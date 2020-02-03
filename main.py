@@ -1,5 +1,5 @@
 rng = range(1, 10)
-n_epochs = 10
+n_epochs = 30
 gamma = 0.3 # THE puzzling parameter (weight between categorical and continuous features)
 
 import numpy as np
@@ -27,7 +27,7 @@ def do_k_prototypes(K):
                 for j in range(6):
                     difference += (cluster[j] - row[j]) ** 2
 
-                for j in range(6, 9):
+                for j in range(6, 10):
                     difference += 0 if cluster[j] == row[j] else 1 * gamma
 
                 differences.append(difference)
@@ -38,6 +38,7 @@ def do_k_prototypes(K):
 
             J += differences[indx] / X.shape[0]
 
+        
         cluster_list = []
         for i in range(K):
             # clusters[i, :] = np.mean(X[cluster_indxs[i], :], axis=0)
@@ -45,9 +46,28 @@ def do_k_prototypes(K):
             cluster_list.append(np.mean(X[cluster_indxs[i], :], axis=0))
 
         clusters = np.stack(cluster_list, axis=0)
-        clusters = np.concatenate([clusters[:, :6], np.round(clusters[:, 6:])], axis=-1)
+        #clusters = np.concatenate([clusters[:, :6], np.round(clusters[:, 6:])], axis=-1)
 
-    return J, cluster_indxs
+
+        for j in range(6, 10):
+          for c in range(len(cluster_indxs)):
+            categorical_count = {}
+            for i in cluster_indxs[c]:
+              if X[i, j] in categorical_count:
+                categorical_count[X[i, j]] += 1
+              else:
+                categorical_count[X[i, j]] = 1
+
+            var = -1
+            maximum = 0
+            for key, value in categorical_count.items():
+              if value > maximum:
+                var = key
+                maximum = value
+
+            clusters[c, j] = var
+
+    return J, cluster_indxs, clusters
 
 workclass = {
     'Private' : 0,
@@ -121,7 +141,7 @@ X = np.concatenate([(X[:, 0:6] - min) / (max - min), X[:, 6:]], -1)
 results = []
 
 for K in rng:
-    J, _ = do_k_prototypes(K)
+    J, _, __ = do_k_prototypes(K)
     results.append(J)
 
 plt.scatter(rng, results)
@@ -129,10 +149,12 @@ plt.show()
 
 K = int(input('Your choice:'))
 
-_, cluster_indxs = do_k_prototypes(K)
+_, cluster_indxs, clusters = do_k_prototypes(K)
 
 X_embedded = TSNE(n_components=2).fit_transform(X)
 
 for i in range(len(cluster_indxs)):
     plt.scatter(X_embedded[cluster_indxs[i], 0], X_embedded[cluster_indxs[i], 1])
 plt.show()
+
+print(clusters)
