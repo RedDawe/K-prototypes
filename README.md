@@ -1,3 +1,3 @@
 # K prototypes
 
-Clustering analysis of a subset of adult the dataset.
+Clustering analysis of a subset of the adult dataset.
