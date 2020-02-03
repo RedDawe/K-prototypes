@@ -1,10 +1,11 @@
 rng = range(1, 10)
 n_epochs = 30
-gamma = 0.3 # THE puzzling parameter (weight between categorical and continuous features)
+gamma = 0.3  # THE puzzling parameter (weight between categorical and continuous features)
 
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
+
 
 def do_k_prototypes(K):
     clusters = np.copy(X[0:K])
@@ -38,7 +39,6 @@ def do_k_prototypes(K):
 
             J += differences[indx] / X.shape[0]
 
-        
         cluster_list = []
         for i in range(K):
             # clusters[i, :] = np.mean(X[cluster_indxs[i], :], axis=0)
@@ -46,64 +46,63 @@ def do_k_prototypes(K):
             cluster_list.append(np.mean(X[cluster_indxs[i], :], axis=0))
 
         clusters = np.stack(cluster_list, axis=0)
-        #clusters = np.concatenate([clusters[:, :6], np.round(clusters[:, 6:])], axis=-1)
-
+        # clusters = np.concatenate([clusters[:, :6], np.round(clusters[:, 6:])], axis=-1)
 
         for j in range(6, 10):
-          for c in range(len(cluster_indxs)):
-            categorical_count = {}
-            for i in cluster_indxs[c]:
-              if X[i, j] in categorical_count:
-                categorical_count[X[i, j]] += 1
-              else:
-                categorical_count[X[i, j]] = 1
+            for c in range(len(cluster_indxs)):
+                categorical_count = {}
+                for i in cluster_indxs[c]:
+                    if X[i, j] in categorical_count:
+                        categorical_count[X[i, j]] += 1
+                    else:
+                        categorical_count[X[i, j]] = 1
 
-            var = -1
-            maximum = 0
-            for key, value in categorical_count.items():
-              if value > maximum:
-                var = key
-                maximum = value
+                var = -1
+                maximum = 0
+                for key, value in categorical_count.items():
+                    if value > maximum:
+                        var = key
+                        maximum = value
 
-            clusters[c, j] = var
+                clusters[c, j] = var
 
     return J, cluster_indxs, clusters
 
+
 workclass = {
-    'Private' : 0,
-    'Self-emp-not-inc' : 1,
-    'Self-emp-inc' : 2,
-    'Federal-gov' : 3,
-    'Local-gov' : 4,
-    'State-gov' : 5,
-    'Without-pay' : 6,
-    'Never-worked' : 7,
-    '?' : 8
+    'Private': 0,
+    'Self-emp-not-inc': 1,
+    'Self-emp-inc': 2,
+    'Federal-gov': 3,
+    'Local-gov': 4,
+    'State-gov': 5,
+    'Without-pay': 6,
+    'Never-worked': 7,
+    '?': 8
 }
 
 marital_status = {
-    'Married-civ-spouse' : 0,
-    'Divorced' : 1,
-    'Never-married' : 2,
-    'Separated' : 3,
-    'Widowed' : 4,
-    'Married-spouse-absent' : 5,
-    'Married-AF-spouse' : 6,
-    '?' : 7
+    'Married-civ-spouse': 0,
+    'Divorced': 1,
+    'Never-married': 2,
+    'Separated': 3,
+    'Widowed': 4,
+    'Married-spouse-absent': 5,
+    'Married-AF-spouse': 6,
+    '?': 7
 }
 
 sex = {
-    'Female' : 0,
-    'Male' : 1,
-    '?' : 2
+    'Female': 0,
+    'Male': 1,
+    '?': 2
 }
 
 pay_grade = {
-    '>50K\n' : 0,
-    '<=50K\n' : 1,
-    '?' : 2
+    '>50K\n': 0,
+    '<=50K\n': 1,
+    '?': 2
 }
-
 
 X = []
 
@@ -131,7 +130,7 @@ with open('adult.data') as f:
 X = np.array(X)
 np.random.shuffle(X)
 
-#X = X[:500, :]
+# X = X[:500, :]
 
 min = np.amin(X[:, 0:6], 0)
 max = np.amax(X[:, 0:6], 0)
@@ -157,4 +156,5 @@ for i in range(len(cluster_indxs)):
     plt.scatter(X_embedded[cluster_indxs[i], 0], X_embedded[cluster_indxs[i], 1])
 plt.show()
 
-print(clusters)
+for i in range(K):
+    print(clusters[i, :6] * (max - min) + min, clusters[i, 6:])
