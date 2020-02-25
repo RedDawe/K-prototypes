@@ -150,11 +150,11 @@ K = int(input('Your choice:'))
 
 _, cluster_indxs, clusters = do_k_prototypes(K)
 
+for i in range(K):
+    print(clusters[i, :6] * (max - min) + min, clusters[i, 6:])
+
 X_embedded = TSNE(n_components=2).fit_transform(X)
 
 for i in range(len(cluster_indxs)):
     plt.scatter(X_embedded[cluster_indxs[i], 0], X_embedded[cluster_indxs[i], 1])
 plt.show()
-
-for i in range(K):
-    print(clusters[i, :6] * (max - min) + min, clusters[i, 6:])
