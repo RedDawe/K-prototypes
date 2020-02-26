@@ -1,6 +1,6 @@
 rng = range(1, 10)
-n_epochs = 30
-gamma = 0.3  # THE puzzling parameter (weight between categorical and continuous features)
+n_epochs = 50
+gamma = 0.3 #weight between categorical and continuous features
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -139,8 +139,10 @@ X = np.concatenate([(X[:, 0:6] - min) / (max - min), X[:, 6:]], -1)
 
 results = []
 
+cache = {}
 for K in rng:
-    J, _, __ = do_k_prototypes(K)
+    J, cluster_indxs, clusters = do_k_prototypes(K)
+    cache[K] = [cluster_indxs, clusters]
     results.append(J)
 
 plt.scatter(rng, results)
@@ -148,7 +150,7 @@ plt.show()
 
 K = int(input('Your choice:'))
 
-_, cluster_indxs, clusters = do_k_prototypes(K)
+cluster_indxs, clusters = cache[K]
 
 for i in range(K):
     print(clusters[i, :6] * (max - min) + min, clusters[i, 6:])
