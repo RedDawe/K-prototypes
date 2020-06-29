@@ -15,3 +15,5 @@ These are our 4 cluster (stereotypical types of people). Only the last one earns
 ![TSNE](https://i.imgur.com/DuwswAb.png)
 
 Finally, here is a TSNE visualization
+
+Z. Huang. Extensions to the k-means algorithm for clustering large data sets with categorical values. Data Mining and Knowledge Discovery, 2(3):283–304, 1998
